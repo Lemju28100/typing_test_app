@@ -1,6 +1,3 @@
-from typing import Text
-from PIL.ImageFont import truetype
-from kivy.uix.behaviors import button
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.image import Image
@@ -47,14 +44,14 @@ class HomePage(Screen):
     def generate_articles_layout(self):
         articles_layout_box = BoxLayout(orientation='vertical', spacing=12, size_hint=(.7, .9))
 
-        refresh_button = Button(text='Refresh', font_size=15, size_hint=(.5, .3))
+        refresh_button = Button(text='Change story', font_size=15, size_hint=(1, .3), on_release=self.load_article)
         articles_layout_box.add_widget(refresh_button)
 
         articles_box = BoxLayout(orientation='vertical', spacing=12, size_hint=(1, 1.2))
     
         
-        change_article_button = Button(text='Change Story', font_size=20, on_release=self.load_article)
-        articles_box.add_widget(change_article_button)
+        change_article_button = Button(text='Change Story', font_size=20)
+        # articles_box.add_widget(change_article_button)
         
         articles_layout_box.add_widget(articles_box)
         Utils.add_empty_space(articles_layout_box, (1, 1))
@@ -66,7 +63,7 @@ class HomePage(Screen):
         self.preview_box.remove_widget(self.preview_box_image)
 
         random_article_path = random.choice(Utils.iter_files('/data/article_images', '.png')[1])
-        self.preview_box_image = Image(source=str(random_article_path), allow_stretch=False, keep_ratio= True)
+        self.preview_box_image = Image(source=str(random_article_path), allow_stretch=True, keep_ratio=  False)
         self.preview_box.add_widget(self.preview_box_image)
         
 
@@ -81,7 +78,7 @@ class HomePage(Screen):
         self.generate_article_images()
 
         random_article_path = random.choice(Utils.iter_files('data/article_images', '.png')[1])
-        self.preview_box_image = Image(source=random_article_path, allow_stretch=True, keep_ratio= True)
+        self.preview_box_image = Image(source=random_article_path, allow_stretch=True, keep_ratio= False)
         self.preview_box.add_widget(self.preview_box_image)
         
 
@@ -109,8 +106,8 @@ class HomePage(Screen):
 
         history_account_box = BoxLayout(orientation='horizontal', spacing=10)
 
-        history_button = Button(text='History', font_size=20)
-        accounts_button = Button(text=self.user[0], font_size=20, background_color = Utils.get_color_from_letter(self.user[0]))
+        history_button = Button(text='History', font_size=20, on_release=self.go_to_history_page)
+        accounts_button = Button(text=str(self.user[0]).upper(), font_size=20, background_color = Utils.get_color_from_letter(self.user[0]), on_release=self.go_to_login_page)
         history_account_box.add_widget(history_button)
         history_account_box.add_widget(accounts_button)
         history_account_start_layout_box.add_widget(history_account_box)
@@ -118,10 +115,26 @@ class HomePage(Screen):
         Utils.add_empty_space(history_account_start_layout_box, (1, 2.4))
 
         start_button_box = BoxLayout(orientation='vertical')
-        start_button = Button(text='start', font_size=25)
+        start_button = Button(text='start', font_size=25, on_release=self.go_to_typing_page)
         start_button_box.add_widget(start_button)
         history_account_start_layout_box.add_widget(start_button_box)
 
         Utils.add_empty_space(history_account_start_layout_box, (1, 2.4))
 
         self.root_widget.add_widget(history_account_start_layout_box)
+
+    def go_to_login_page(self, button):
+        self.controller.initialize_login_page()
+
+    def go_to_history_page(self, button):
+        self.controller.initialize_history_page(self.user)
+
+
+    
+    def go_to_typing_page(self, button):
+
+        img_source = self.preview_box_image.source
+        img_source = img_source.split('/')[-1].split('.')[0]
+        article_path = f'{self.articles_dir}/{img_source}.txt'
+        
+        self.controller.initialize_typing_page(self.user, article_path)

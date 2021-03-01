@@ -7,6 +7,7 @@ from PIL import Image as Im
 from PIL import ImageFont
 from PIL import ImageOps
 from PIL import ImageDraw
+import shutil
 
 
 try:
@@ -101,13 +102,13 @@ class Utils():
 
     
     @staticmethod
-    def generate_input_popup(callback, size_hint=(.7, .5), hint_text='Enter username. Only letters', button_text='Submit', title='Enter username', message='Please enter username.\n3 - 10 characters\nNo spaces, punctuations, numbers, or special characters like @\nEnter only letters'):
+    def generate_input_popup(callback, size_hint=(.5, .3), hint_text='Enter username. Only letters', button_text='Submit', title='Enter username', message='Please enter username.\n3 - 10 characters\nNo spaces, punctuations, numbers, or special characters like @\nEnter only letters'):
         """ Returns an input field, to which the text inputted can be drawn from, and the pop up just so it can be closed"""
         input_popup = Popup(size_hint=size_hint, title=title)
         popup_box = BoxLayout(orientation='vertical')
         popup_label = Label(text=message)
-        input_entry = TextInput(font_size=15, hint_text=hint_text, size_hint=(1, .4))
-        submit_button = Button(text=button_text, font_size=15, on_release=callback)
+        input_entry = TextInput(font_size=20, hint_text=hint_text, size_hint=(1, .3))
+        submit_button = Button(text=button_text, font_size=15, on_release=callback, size_hint=(.5, .3))
 
         popup_box.add_widget(popup_label)
         popup_box.add_widget(input_entry)
@@ -132,7 +133,7 @@ class Utils():
          You can use absolute directories by changing the root path.
         The root path is by default your current working directory.""" 
         path = os.path.join(f'{root_path}/{relative_path}/{name}')
-        os.rmdir(path=path)
+        shutil.rmtree(path)
 
     @staticmethod
     def set_background(screen:Screen, relative_path:str, root_path=os.getcwd()):
@@ -188,8 +189,8 @@ class Utils():
             return ''
 
     @staticmethod
-    def add_empty_space(master:Widget, size_hint:tuple):
-        master.add_widget(BoxLayout(size_hint=size_hint, orientation='vertical'))
+    def add_empty_space(master:Widget, size_hint:tuple, orientation='vertical'):
+        master.add_widget(BoxLayout(size_hint=size_hint, orientation=orientation))
 
 
     @staticmethod
@@ -210,7 +211,7 @@ class Utils():
             lines = tuple(l.rstrip() for l in text_file.readlines())
 
         # choose a font (you can see more detail in my library on github)
-        large_font = 20  # get better resolution with larger size
+        large_font = 30  # get better resolution with larger size
         font_path = font_path or 'cour.ttf'  # Courier New. works in windows. linux may need more explicit path
         try:
             font = ImageFont.truetype(font_path, size=large_font)
@@ -234,7 +235,7 @@ class Utils():
         # draw each line of text
         vertical_position = 5
         horizontal_position = 5
-        line_spacing = int(round(max_height * 0.8))  # reduced spacing seems better
+        line_spacing = int(round(max_height * 1.5))  # reduced spacing seems better
         for line in lines:
             draw.text((horizontal_position, vertical_position),
                     line, fill=PIXEL_ON, font=font)
@@ -242,6 +243,8 @@ class Utils():
         # crop the text
         c_box = ImageOps.invert(image).getbbox()
         image = image.crop(c_box)
+
+        # image.show()
         return image
 
 

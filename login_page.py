@@ -1,14 +1,10 @@
 from functools import partial
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
-from kivy.uix.image import Image
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.textinput import TextInput
 from kivy.uix.label import Label
 
 from utilities import Utils
-
-import re
 
 import os
 
@@ -78,6 +74,12 @@ class LoginPage(Screen):
         
         # Save new user to users folder and update layout
         Utils.create_directory(username_entered.lower(), 'users')
+        # with open(f'users/{username_entered.lower()}/{username_entered.lower()}.csv', 'w') as csv_file:
+        #         field_names = ['date', 'story', 'speed', 'accuracy', 'adjusted_speed']
+        #         writer = csv.DictWriter(csv_file, fieldnames=field_names)
+
+        #         writer.writeheader()
+
         self.root_box.remove_widget(self.accounts_box)
         self.generate_accounts_box(page_controller=page_controller)
 
